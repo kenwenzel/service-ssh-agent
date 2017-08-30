@@ -8,7 +8,7 @@ This is achieved by exposing a proxy socket (`/.ssh-agent/proxy-socket`) via soc
 ### 1. Start the ssh-agent container 
 
 ```bash
-docker run -d --name=ssh-agent docksal/ssh-agent
+docker run -d --name=ssh-agent kenwenzel/ssh-agent
 ```
 
 ### 2. Add your ssh keys
