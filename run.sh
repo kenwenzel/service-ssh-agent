@@ -78,6 +78,7 @@ case "$1" in
 
 		echo "Launching ssh-agent..."
 		# Start ssh-agent
+		rm ${SSH_AUTH_SOCK} > /dev/null 2>&1
 		/usr/bin/ssh-agent -a ${SSH_AUTH_SOCK}
 
 		addKey
@@ -91,7 +92,7 @@ case "$1" in
 
 		# Create proxy-socket for ssh-agent (to give anyone accees to the ssh-agent socket)
 		echo "Creating proxy socket..."
-		rm ${SSH_AUTH_SOCK} ${SSH_AUTH_PROXY_SOCK} > /dev/null 2>&1
+		rm ${SSH_AUTH_PROXY_SOCK} > /dev/null 2>&1
 		exec socat UNIX-LISTEN:${SSH_AUTH_PROXY_SOCK},perm=0666,fork UNIX-CONNECT:${SSH_AUTH_SOCK}
 
 		;;
