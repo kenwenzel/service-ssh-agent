@@ -1,7 +1,8 @@
-FROM alpine:3.4
+FROM alpine
 
 RUN apk add --no-cache \
 	bash \
+	grep \
 	openssh \
 	socat \
 	&& rm -rf /var/cache/apk/*
