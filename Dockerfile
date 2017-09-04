@@ -3,6 +3,7 @@ FROM alpine
 RUN apk add --no-cache \
 	bash \
 	grep \
+	curl \
 	openssh \
 	socat \
 	&& rm -rf /var/cache/apk/*

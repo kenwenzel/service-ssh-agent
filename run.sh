@@ -26,8 +26,20 @@ createKey() {
 		key_file="$HOST_SSH_KEY_PATH/id_rsa"
 		if [ ! -f "$key_file" ]; then
 			echo "Creating SSH key pair..."
-			IP_ADDRESS=$(ifconfig | grep -Pazo 'eth[0-9]\s+\N+\n\s+inet (addr:)?([0-9]*.){3}[0-9]*' | grep -Eao '([0-9]*\.){3}[0-9]*' | grep -va '127.0.0.1'| head -n1)
-			ssh-keygen -t rsa -b 4096 -C "$IP_ADDRESS" -N "" -f "$key_file"
+
+			SSH_KEY_COMMENT=""
+			if nc -z rancher-metadata 80 -w 3 2>/dev/null; then
+				RANCHER_META=http://rancher-metadata/2015-07-25
+				CONTAINER_NAME=$(curl --retry 3 --fail --silent $RANCHER_META/self/container/name)
+				SSH_KEY_COMMENT="$CONTAINER_NAME"
+			fi
+
+			if [ -z "$SSH_KEY_COMMENT" ]; then
+				IP_ADDRESS=$(ifconfig | grep -Pazo 'eth[0-9]\s+\N+\n\s+inet (addr:)?([0-9]*.){3}[0-9]*' | grep -Eao '([0-9]*\.){3}[0-9]*' | grep -va '127.0.0.1'| head -n1)
+				SSH_KEY_COMMENT="$IP_ADDRESS"
+			fi
+
+			ssh-keygen -t rsa -b 4096 -C "$SSH_KEY_COMMENT" -N "" -f "$key_file"
 			chmod 600 "$key_file" 2>&1 || true
 			chmod 644 "${key_file}.pub" >/dev/null 2>&1 || true
 		fi
